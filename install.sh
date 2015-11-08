@@ -11,7 +11,7 @@ sudo -H pip install -U pyvirtualdisplay beautifulsoup4 netlib pyasn1 PyOPenSSL p
 
 # Install specific mitmproxy version since we rely on some internal structure of 
 # netlib and mitmproxy. New releases tend to break things and should be tested
-sudo pip install mitmproxy==0.13
+sudo pip install mitmproxy==0.14
 
 # Install specific version of Firefox and selenium
 # known to work well together.

@@ -46,6 +46,7 @@ class InterceptingMaster (controller.Master):
         try:
             msg = q.get(timeout=timeout)
             controller.Master.handle(self, *msg)
+            q.task_done()
             return True
         except Queue.Empty:
             return False

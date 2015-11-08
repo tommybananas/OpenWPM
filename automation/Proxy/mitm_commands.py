@@ -27,7 +27,12 @@ def encode_to_unicode(msg):
 
 def process_general_mitm_request(db_socket, browser_params, top_url, msg):
     """ Logs a HTTP request object """
-    referrer = msg.request.headers['referer'][0] if len(msg.request.headers['referer']) > 0 else ''
+    try:
+	referrer = msg.request.headers['referer']
+        print "Referrer: " + referrer
+    except KeyError:
+        referrer = ''
+        pass
 
     data = (browser_params['crawl_id'],
             encode_to_unicode(msg.request.url),
@@ -43,8 +48,18 @@ def process_general_mitm_request(db_socket, browser_params, top_url, msg):
 
 def process_general_mitm_response(db_socket, ldb_socket, logger, browser_params, top_url, msg):
     """ Logs a HTTP response object and, if necessary, """
-    referrer = msg.request.headers['referer'][0] if len(msg.request.headers['referer']) > 0 else ''
-    location = msg.response.headers['location'][0] if len(msg.response.headers['location']) > 0 else ''
+    try:
+	referrer = msg.request.headers['referer']
+        print "Referrer: " + referrer
+    except KeyError:
+        referrer = ''
+        pass
+    try:
+	location = msg.response.headers['location']
+        print "Location: " + location
+    except KeyError:
+        location = ''
+        pass
     
     content_hash = save_javascript_content(ldb_socket, logger, browser_params, msg)
     
@@ -52,8 +67,8 @@ def process_general_mitm_response(db_socket, ldb_socket, logger, browser_params,
             encode_to_unicode(msg.request.url),
             encode_to_unicode(msg.request.method),
             encode_to_unicode(referrer),
-            msg.response.code,
-            msg.response.msg,
+            msg.response.status_code,
+            msg.response.reason,
             json.dumps(msg.response.headers.get_state()),
             encode_to_unicode(location),
             top_url,
