@@ -5,6 +5,7 @@ var pageManager         = require("./lib/page-manager.js");
 var cookieInstrument    = require("./lib/cookie-instrument.js");
 var jsInstrument        = require("./lib/javascript-instrument.js");
 var cpInstrument        = require("./lib/content-policy-instrument.js");
+var httpInstrument      = require("./lib/http-instrument.js");
 
 exports.main = function(options, callbacks) {
 
@@ -30,11 +31,9 @@ exports.main = function(options, callbacks) {
     }
 
     // Turn on instrumentation
-    if (enableCK || enableJS || enableCP) {
-        loggingDB.open(host, port, crawlID);
-        //BROKEN
-        //pageManager.setup(crawlID);
-    }
+    loggingDB.open(host, port, crawlID);
+    //BROKEN
+    //pageManager.setup(crawlID);
     if (enableCK) {
         console.log("Cookie instrumentation enabled");
         cookieInstrument.run(crawlID);
@@ -47,4 +46,6 @@ exports.main = function(options, callbacks) {
         console.log("Content Policy instrumentation enabled");
         cpInstrument.run(crawlID);
     }
+    // Always run HTTP Instrument
+    httpInstrument.run(crawlID);
 };

@@ -1,9 +1,9 @@
 {
     "proxy": true,
     "extension": {
-        "enabled": false,
+        "enabled": true,
         "cookieInstrument": false,
-        "jsInstrument": false,
+        "jsInstrument": true,
         "cpInstrument": false
     },
     "save_javascript": false,

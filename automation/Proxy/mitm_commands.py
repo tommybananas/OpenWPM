@@ -36,8 +36,8 @@ def process_general_mitm_request(db_socket, browser_params, visit_id, msg):
             visit_id,
             str(datetime.datetime.now()))
 
-    db_socket.send(("INSERT INTO http_requests (crawl_id, url, method, referrer, headers, "
-                    "visit_id, time_stamp) VALUES (?,?,?,?,?,?,?)", data))
+    #db_socket.send(("INSERT INTO http_requests (crawl_id, url, method, referrer, headers, "
+    #                "visit_id, time_stamp) VALUES (?,?,?,?,?,?,?)", data))
 
 
 def process_general_mitm_response(db_socket, ldb_socket, logger, browser_params, visit_id, msg):
@@ -59,8 +59,8 @@ def process_general_mitm_response(db_socket, ldb_socket, logger, browser_params,
             str(datetime.datetime.now()),
             content_hash)
 
-    db_socket.send(("INSERT INTO http_responses (crawl_id, url, method, referrer, response_status, "
-                    "response_status_text, headers, location, visit_id, time_stamp, content_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?)", data))
+    #db_socket.send(("INSERT INTO http_responses (crawl_id, url, method, referrer, response_status, "
+    #                "response_status_text, headers, location, visit_id, time_stamp, content_hash) VALUES (?,?,?,?,?,?,?,?,?,?,?)", data))
 
 
 def save_javascript_content(ldb_socket, logger, browser_params, msg):

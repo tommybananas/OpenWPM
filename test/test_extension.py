@@ -71,6 +71,7 @@ class TestExtension(OpenWPMTest):
 
         assert visit_ids[url_a] == simple_a_visit_id[0][0]
         assert visit_ids[url_b] == simple_b_visit_id[0][0]
+        assert visit_ids[url_a] != visit_ids[url_b]
 
     def check_webrtc_sdp_offer(self, sdp_str):
         """Make sure the SDP offer includes expected fields/strings.
