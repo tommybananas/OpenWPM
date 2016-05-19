@@ -1,12 +1,16 @@
-const {Cc, Ci} = require("chrome");
+const {Cc, Ci, CC, Cu} = require("chrome");
 var events = require("sdk/system/events");
 const data = require("sdk/self").data;
 var loggingDB = require("./loggingdb.js");
 var timers = require("sdk/timers");
 var pageManager = require("./page-manager.js");
+Cu.import('resource://gre/modules/Services.jsm');
+
+var BinaryInputStream = CC('@mozilla.org/binaryinputstream;1', 'nsIBinaryInputStream', 'setInputStream');
+var BinaryOutputStream = CC('@mozilla.org/binaryoutputstream;1', 'nsIBinaryOutputStream', 'setOutputStream');
+var StorageStream = CC('@mozilla.org/storagestream;1', 'nsIStorageStream', 'init');
 
 exports.run = function(crawlID) {
-
 	// Set up logging
 	var createHttpRequestTable = data.load("create_http_requests_table.sql");
 	loggingDB.executeSQL(createHttpRequestTable, false);
@@ -51,9 +55,59 @@ exports.run = function(crawlID) {
 		loggingDB.executeSQL(loggingDB.createInsert("http_requests", update), true);
 
 	}, true);
+		
 	
+	function TracingListener() {
+		this.receivedChunks = []; // array for incoming data. onStopRequest we combine these to get the full source
+		this.responseBody;
+		this.responseStatusCode;
+
+		this.deferredDone = {
+			promise: null,
+			resolve: null,
+			reject: null
+		};
+		this.deferredDone.promise = new Promise(function(resolve, reject) {
+			this.resolve = resolve;
+			this.reject = reject;
+		}.bind(this.deferredDone));
+		Object.freeze(this.deferredDone);
+		this.promiseDone = this.deferredDone.promise;
+	}
+	TracingListener.prototype = {
+		onDataAvailable: function(aRequest, aContext, aInputStream, aOffset, aCount) {
+			var iStream = new BinaryInputStream(aInputStream) // binaryaInputStream
+			var sStream = new StorageStream(8192, aCount, null);
+			var oStream = new BinaryOutputStream(sStream.getOutputStream(0));
+
+			// Copy received data as they come.
+			var data = iStream.readBytes(aCount);
+			this.receivedChunks.push(data);
+			oStream.writeBytes(data, aCount);
+
+			this.originalListener.onDataAvailable(aRequest, aContext, sStream.newInputStream(0), aOffset, aCount);
+		},
+		onStartRequest: function(aRequest, aContext) {
+			this.originalListener.onStartRequest(aRequest, aContext);
+		},
+		onStopRequest: function(aRequest, aContext, aStatusCode) {
+			this.responseBody = this.receivedChunks.join("");
+			delete this.receivedChunks;
+			this.responseStatus = aStatusCode;
+
+			this.originalListener.onStopRequest(aRequest, aContext, aStatusCode);
+			this.deferredDone.resolve();
+		},
+		QueryInterface: function(aIID) {
+			if (aIID.equals(Ci.nsIStreamListener) || aIID.equals(Ci.nsISupports)) {
+				return this;
+			}
+			throw Cr.NS_NOINTERFACE;
+		}
+	};
+
 	// Instrument HTTP responses
-	var httpResponseHandler = function(event, isCached) {
+	var httpResponseHandler = function(event, isCached) {	
 		var httpChannel = event.subject.QueryInterface(Ci.nsIHttpChannel);
 
 		// http_responses table schema:
@@ -104,7 +158,26 @@ exports.run = function(crawlID) {
 		}});		
 		update["headers"] = JSON.stringify(headers);
 
-		loggingDB.executeSQL(loggingDB.createInsert("http_responses", update), true);
+		var newListener = new TracingListener();
+		event.subject.QueryInterface(Ci.nsITraceableChannel);
+		newListener.originalListener = event.subject.setNewListener(newListener);
+		newListener.promiseDone.then(
+			function() {
+				// no error happened
+				update["content_hash"] = "testing";
+				loggingDB.executeSQL(loggingDB.createInsert("http_responses", update), true); 
+
+			},
+			function(aReason) {
+				// promise was rejected
+			}
+		).catch(
+			function(aCatch) {
+				console.error('something went wrong, a typo by dev probably:', aCatch);
+			}
+		);
+			
+		
 	};
 	
 	events.on("http-on-examine-response", function(event) {
@@ -115,5 +188,5 @@ exports.run = function(crawlID) {
 	events.on("http-on-examine-cached-response", function(event) {
 		httpResponseHandler(event, true);
 	}, true);
-
+	
 };
