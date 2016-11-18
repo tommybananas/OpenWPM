@@ -7,26 +7,21 @@ chrome.app.runtime.onLaunched.addListener(function() {
   });
 });
 
+/**
+ * Kill the current tab and create a new one to stop traffic.
+ */
+function tab_restart_browser() {
+    var current_url = window.location.href;
+    window.close();
+    window.open(current_url);
+}
+
 function browser_scroll(x-coord, y-coord) {
     window.scrollTo(x-coord, y-coord)
 }
 
 function listCookies() {
     return document.cookie.split(';');
-}
-
-function close_window() {
-    window.close();
-}
-
-function open_new_window(url) {
-    window.open(url);
-}
-
-function tab_restart_browser() {
-    var current_url = window.location.href
-    close_window()
-    open_new_window(current_url)
 }
 
 function get_links_in_current_window() {
