@@ -8,7 +8,7 @@ sio = socketio.Server(async_mode='eventlet')
 @sio.on('connect', namespace='/chat')
 def connect(sid, environ):
     print("connect ", sid)
-    print "connect"
+    print("connect")
 
 @sio.on('message', namespace='/chat')
 def message(sid, data):
