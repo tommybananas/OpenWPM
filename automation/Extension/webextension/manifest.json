@@ -1,11 +1,11 @@
 {
-  "name": "Hello World!",
-  "description": "My first Chrome App.",
+  "name": "OpenWPM",
+  "description": "OpenWPM WebExension",
   "version": "0.1",
   "manifest_version": 2,
   "app": {
     "background": {
-      "scripts": ["background.js"]
+      "scripts": ["socketio/socket.io.js","background.js"]
     }
   },
   "icons": { "16": "calculator-16.png", "128": "calculator-128.png" }
