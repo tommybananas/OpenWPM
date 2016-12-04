@@ -1,0 +1,17 @@
+{
+  "name": "OpenWPM",
+  "description": "OpenWPM WebExension",
+  "version": "0.1",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": {
+      "16": "calculator-16.png",
+      "128": "calculator-128.png"
+    },
+    "default_title": "OpenWPM",
+    "default_popup": "popup.html"
+  },
+  "background": {
+      "scripts": ["socketio/socket.io.js", "background.js"]
+  }
+}
