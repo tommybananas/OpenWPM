@@ -15,5 +15,12 @@
             ],
         "js": ["content.js"]
         }
-    ]
+    ],
+  "permissions": [
+      "cookies",
+      "tabs",
+      "http://*/*",
+      "https://*/*"
+  ]
+
 }
