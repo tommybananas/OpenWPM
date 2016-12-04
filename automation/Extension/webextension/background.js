@@ -16,8 +16,8 @@ function tab_restart_browser() {
     window.open(current_url);
 }
 
-function browser_scroll(x-coord, y-coord) {
-    window.scrollTo(x-coord, y-coord)
+function browser_scroll(x_coord, y_coord) {
+    window.scrollTo(x_coord, y_coord)
 }
 
 function listCookies() {
