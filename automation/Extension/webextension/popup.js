@@ -12,4 +12,4 @@ docment.addEventListener('DOMContentLoaded', function() {
     checkPageButton.addEventListener('click', function() {
         startSocketServer;
     }, false);
-}
+})
