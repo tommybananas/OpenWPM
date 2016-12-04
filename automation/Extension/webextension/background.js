@@ -1,12 +1,3 @@
-chrome.app.runtime.onLaunched.addListener(function() {
-  chrome.app.window.create('window.html', {
-    'outerBounds': {
-      'width': 400,
-      'height': 500
-    }
-  });
-});
-
 /**
  * Kill the current tab and create a new one to stop traffic.
  */
