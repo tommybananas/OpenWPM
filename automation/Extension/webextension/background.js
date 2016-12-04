@@ -56,5 +56,3 @@ function reportCookies(obj){
   console.log('reportcookies', obj);
   return true;
 }
-
-function
