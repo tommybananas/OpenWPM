@@ -44,7 +44,7 @@ function reportProfile(obj){
 }
 
 function reportCookies(obj){
-  console.log('reportcookies', JSON.stringify(obj));
+  //console.log('reportcookies', JSON.stringify(obj));
   return true;
 }
 
@@ -54,9 +54,17 @@ if (getSettings()[0]){
     })
 }
 
+
 if (getSettings()[1]) {
 
+
+    chrome.webRequest.onCompleted.addListener(
+        function(details) {
+          reportProfile(details);
+        },
+        {urls: ["<all_urls>"]});
 }
+
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
   chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {

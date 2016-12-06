@@ -18,6 +18,7 @@
     ],
   "permissions": [
       "cookies",
+      "webRequest",
       "tabs",
       "http://*/*",
       "https://*/*"
