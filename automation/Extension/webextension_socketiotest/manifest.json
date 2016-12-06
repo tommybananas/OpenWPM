@@ -3,10 +3,14 @@
   "description": "OpenWPM WebExension",
   "version": "0.1",
   "manifest_version": 2,
-  "app": {
-    "background": {
-      "scripts": ["socketio/socket.io.js","background.js"]
-    }
+  "background": {
+    "scripts": ["socketio/socket.io.js","background.js"]
   },
-  "icons": { "16": "calculator-16.png", "128": "calculator-128.png" }
+  "icons": { "16": "calculator-16.png", "128": "calculator-128.png" },
+  "permissions": [
+      "cookies",
+      "tabs",
+      "http://*/*",
+      "https://*/*"
+  ]
 }
