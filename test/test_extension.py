@@ -15,8 +15,7 @@ class TestExtension(OpenWPMTest):
         manager_params['data_directory'] = data_dir
         manager_params['log_directory'] = data_dir
         browser_params[0]['headless'] = True
-        browser_params[0]['extension']['enabled'] = True
-        browser_params[0]['extension']['jsInstrument'] = True
+        browser_params[0]['js_instrument'] = True
         manager_params['db'] = os.path.join(manager_params['data_directory'],
                                             manager_params['database_name'])
         return manager_params, browser_params
@@ -50,7 +49,7 @@ class TestExtension(OpenWPMTest):
 
         manager.get(url_a)
         manager.get(url_b)
-        manager.close(post_process=False)
+        manager.close()
         qry_res = utilities.query_db(manager_params['db'],
                                      "SELECT visit_id, site_url FROM site_visits")
 
@@ -105,4 +104,13 @@ class TestExtension(OpenWPMTest):
         for item in rows:
             observed_symbols.add(item[1])
         assert expected.audio == observed_symbols
+
+    def test_js_call_stack(self, tmpdir):
+        db = self.visit('/js_call_stack.html', str(tmpdir))
+        # Check that all stack info are recorded
+        rows = utilities.get_javascript_entries(db, all_columns=True)
+        observed_rows = set()
+        for item in rows:
+            observed_rows.add(item[3:11])
+        assert set(expected.js_stack_calls) == observed_rows
 
