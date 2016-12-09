@@ -470,7 +470,8 @@ function insertScript(text, data) {
 }
 
 function emitMsg(type, msg) {
-  self.port.emit(type, msg);
+  var port = chrome.runtime.connect({name: "javascriptMsg"});
+  port.postMessage({type: msg});
 }
 
 var event_id = Math.random();
