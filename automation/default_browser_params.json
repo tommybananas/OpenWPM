@@ -1,9 +1,9 @@
 {
     "extension_enabled": true,
     "disable_webdriver_self_id": true,
-    "cookie_instrument": false,
-    "js_instrument": false,
-    "cp_instrument": false,
+    "cookie_instrument": true,
+    "js_instrument": true,
+    "cp_instrument": true,
     "http_instrument": false,
     "save_javascript": false,
 
@@ -14,7 +14,7 @@
     "profile_tar": null,
     "profile_archive_dir": null,
     "headless": false,
-    "browser": "firefox",
+    "browser": "chrome",
 
     "tp_cookies": "always",
     "donottrack": false,

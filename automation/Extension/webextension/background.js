@@ -1,3 +1,5 @@
+var DEBUG = true;
+
 /**
  * Kill the current tab and create a new one to stop traffic.
  */
@@ -30,19 +32,19 @@ function dump_page_source(url) {
 
 function reportJs(obj){
   console.log('reportjs', obj);
-  socket.emit('sql', { data: obj, type: 'js' });
+  if (!DEBUG) socket.emit('sql', { data: obj, type: 'js' });
   return true;
 }
 
 function reportProfile(obj){
   console.log('reportprofile', obj);
-  socket.emit('sql', { data: obj, type: 'cp' });
+  if (!DEBUG) socket.emit('sql', { data: obj, type: 'cp' });
   return true;
 }
 
 function reportCookies(obj){
   console.log('reportcookies', obj);
-  socket.emit('sql', { data: obj, type: 'ck' });
+  if (!DEBUG) socket.emit('sql', { data: obj, type: 'ck' });
   return true;
 }
 
@@ -83,16 +85,20 @@ chrome.runtime.onMessage.addListener(
 
 
   // connect to websocket server
-  var socket = io('http://localhost:7331/openwpm');
-  var is_setup = false;
-  socket.on('config', function (data) {
-    settings = [false, false, false];
-    settings[0] = data['ck'];
-    settings[1] = data['cp'];
-    settings[2] = data['js'];
-    if (!is_setup){
-      console.log('config data',data);
-      setup(settings);
-      is_setup = true;
-    }
-  });
+  if (DEBUG){
+    setup([true,true,true]);
+  } else {
+    var socket = io('http://localhost:7331/openwpm');
+    var is_setup = false;
+    socket.on('config', function (data) {
+      settings = [false, false, false];
+      settings[0] = data['ck'];
+      settings[1] = data['cp'];
+      settings[2] = data['js'];
+      if (!is_setup){
+        console.log('config data',data);
+        setup(settings);
+        is_setup = true;
+      }
+    });
+  }

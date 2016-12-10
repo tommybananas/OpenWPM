@@ -23,12 +23,11 @@ def deploy_chrome(browser_params):
     # Load extensions (unpacked)
     co.add_argument("--allow-legacy-extension-manifests")
     if browser_params['extension_enabled']:
-        co.add_extension(os.path.join(os.path.dirname(__file__) + "/../", 'extension/webextension'))
+        pass
+        #co.add_argument("--load-extension=%s" % (os.path.join(os.path.dirname(__file__) + "/../", 'extension/webextension')))
 
     if browser_params['debugging']:
-        co.add_argument("--load-extension=%s" %
-                        (os.path.join(os.path.dirname(__file__) + "/../", 'extensions/firebug_chrome/')))
-        pass
+        co.add_argument("--load-extension=%s" % (os.path.join(os.path.dirname(__file__) + "/../", 'extensions/firebug_chrome/')))
 
     if browser_params['proxy'] is not None:
         PROXY_HOST = "localhost"
