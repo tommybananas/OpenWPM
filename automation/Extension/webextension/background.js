@@ -28,11 +28,6 @@ function dump_page_source(url) {
     return document.documentElement.outerHTML
 }
 
-
-function getSettings(){
-  return [true, true, true];
-}
-
 function reportJs(obj){
   console.log('reportjs', obj);
   socket.emit('sql', { data: obj, type: 'js' });
@@ -46,43 +41,36 @@ function reportProfile(obj){
 }
 
 function reportCookies(obj){
-  //console.log('reportcookies', JSON.stringify(obj));
+  console.log('reportcookies', obj);
   socket.emit('sql', { data: obj, type: 'ck' });
   return true;
 }
 
-if (getSettings()[0]){
-    chrome.cookies.onChanged.addListener(function(info){
-        reportCookies(info);
-    })
+function setup(settings){
+  if (settings[0]){
+      chrome.cookies.onChanged.addListener(function(info){
+          reportCookies(info);
+      })
+  }
+
+  if (settings[1]) {
+
+      chrome.webRequest.onCompleted.addListener(
+          function(details) {
+            reportProfile(details);
+          },
+          {urls: ["<all_urls>"]});
+  }
+
+  if (settings[2]) {
+      chrome.runtime.onConnect.addListener(function(port) {
+          console.assert(port.name == "javascriptMsg");
+          port.onMessage.addListener(function(msg) {
+              reportJs(msg);
+          });
+      });
+  }
 }
-
-
-if (getSettings()[1]) {
-
-
-    chrome.webRequest.onCompleted.addListener(
-        function(details) {
-          reportProfile(details);
-        },
-        {urls: ["<all_urls>"]});
-}
-
-if (getSettings()[2]) {
-    chrome.runtime.onConnect.addListener(function(port) {
-        console.assert(port.name == "javascriptMsg");
-        port.onMessage.addListener(function(msg) {
-            reportJs(msg);
-        });
-    });
-}
-
-
-chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-  chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
-    console.log(response.farewell);
-  });
-});
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
@@ -94,12 +82,17 @@ chrome.runtime.onMessage.addListener(
   });
 
 
-
+  // connect to websocket server
   var socket = io('http://localhost:7331/openwpm');
+  var is_setup = false;
   socket.on('config', function (data) {
-    console.log('config data',data);
+    settings = [false, false, false];
+    settings[0] = data['ck'];
+    settings[1] = data['cp'];
+    settings[2] = data['js'];
+    if (!is_setup){
+      console.log('config data',data);
+      setup(settings);
+      is_setup = true;
+    }
   });
-  function startSocketServer(){
-    socket.emit('sql', { data: 'tab opened' });
-  }
-  chrome.tabs.onCreated.addListener(startSocketServer);

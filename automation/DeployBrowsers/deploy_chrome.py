@@ -22,7 +22,8 @@ def deploy_chrome(browser_params):
 
     # Load extensions (unpacked)
     co.add_argument("--allow-legacy-extension-manifests")
-    # co.add_extension(os.path.join(os.path.dirname(__file__),'extensions/....'))
+    if browser_params['extension_enabled']:
+        co.add_extension(os.path.join(os.path.dirname(__file__) + "/../", 'extension/webextension'))
 
     if browser_params['debugging']:
         co.add_argument("--load-extension=%s" %
