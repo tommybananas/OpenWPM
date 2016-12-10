@@ -3,19 +3,18 @@ import eventlet
 import eventlet.wsgi
 import threading
 
-def startSocketServer():
+def startSocketServer(browser_params={'js_instrument':True, 'cookie_instrument': True, 'cp_instrument': True}):
     sio = socketio.Server(async_mode='eventlet')
-    @sio.on('connect', namespace='/chat')
+    @sio.on('connect', namespace='/openwpm')
     def connect(sid, environ):
         print("connect ", sid)
-        print("connect")
+        sio.emit('config',{'js':browser_params['js_instrument'], 'cookie': browser_params['cookie_instrument'], 'cp': browser_params['cp_instrument']},namespace='/openwpm')
 
-    @sio.on('message', namespace='/chat')
+    @sio.on('sql', namespace='/openwpm')
     def message(sid, data):
-        print("message ", data)
-        sio.emit('reply', room=sid)
+        print("sql ", data)
 
-    @sio.on('disconnect', namespace='/chat')
+    @sio.on('disconnect', namespace='/openwpm')
     def disconnect(sid):
         print('disconnect ', sid)
 

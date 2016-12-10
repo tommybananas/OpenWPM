@@ -35,16 +35,19 @@ function getSettings(){
 
 function reportJs(obj){
   console.log('reportjs', obj);
+  socket.emit('sql', { data: obj, type: 'js' });
   return true;
 }
 
 function reportProfile(obj){
   console.log('reportprofile', obj);
+  socket.emit('sql', { data: obj, type: 'cp' });
   return true;
 }
 
 function reportCookies(obj){
   //console.log('reportcookies', JSON.stringify(obj));
+  socket.emit('sql', { data: obj, type: 'ck' });
   return true;
 }
 
@@ -89,3 +92,14 @@ chrome.runtime.onMessage.addListener(
     if (request.greeting == "request_settings")
       sendResponse({settings: getSettings()});
   });
+
+
+
+  var socket = io('http://localhost:7331/openwpm');
+  socket.on('config', function (data) {
+    console.log('config data',data);
+  });
+  function startSocketServer(){
+    socket.emit('sql', { data: 'tab opened' });
+  }
+  chrome.tabs.onCreated.addListener(startSocketServer);

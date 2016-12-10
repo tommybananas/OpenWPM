@@ -273,7 +273,7 @@ def BrowserManager(command_queue, status_queue, browser_params, manager_params, 
         else:
             extension_socket = None
 
-        startSocketServer()
+        startSocketServer(browser_params)
 
         # passes the profile folder, WebDriver pid and display pid back to the TaskManager
         # now, the TaskManager knows that the browser is successfully set up
