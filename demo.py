@@ -18,13 +18,14 @@ browser_params[0]['headless'] = True #Launch only browser 0 headless
 # Update TaskManager configuration (use this for crawl-wide settings)
 manager_params['data_directory'] = '~/Desktop/'
 manager_params['log_directory'] = '~/Desktop/'
-
+print "hi"
 # Instantiates the measurement platform
 # Commands time out by default after 60 seconds
 manager = TaskManager.TaskManager(manager_params, browser_params)
-
+print "manager"
 # Visits the sites with all browsers simultaneously
 for site in sites:
+    print site
     command_sequence = CommandSequence.CommandSequence(site)
 
     # Start by visiting the page

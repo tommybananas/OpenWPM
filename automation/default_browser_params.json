@@ -1,9 +1,9 @@
 {
-    "extension_enabled": true,
+    "extension_enabled": false,
     "disable_webdriver_self_id": true,
-    "cookie_instrument": true,
-    "js_instrument": true,
-    "cp_instrument": true,
+    "cookie_instrument": false,
+    "js_instrument": false,
+    "cp_instrument": false,
     "http_instrument": false,
     "save_javascript": false,
 

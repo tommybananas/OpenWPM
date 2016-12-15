@@ -29,10 +29,10 @@ def deploy_chrome(browser_params):
     if browser_params['debugging']:
         co.add_argument("--load-extension=%s" % (os.path.join(os.path.dirname(__file__) + "/../", 'extensions/firebug_chrome/')))
 
-    if browser_params['proxy'] is not None:
-        PROXY_HOST = "localhost"
-        PROXY_PORT = browser_params['proxy']
-        co.add_argument("--proxy-server=%s:%i" % (PROXY_HOST, PROXY_PORT))
+    # if browser_params['proxy'] is not None:
+    #     PROXY_HOST = "localhost"
+    #     PROXY_PORT = browser_params['proxy']
+    #     co.add_argument("--proxy-server=%s:%i" % (PROXY_HOST, PROXY_PORT))
 
     driver = webdriver.Chrome(chrome_options=co)
 

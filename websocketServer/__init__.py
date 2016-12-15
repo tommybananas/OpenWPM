@@ -13,6 +13,7 @@ def startSocketServer(browser_params={'js_instrument':True, 'cookie_instrument':
     @sio.on('sql', namespace='/openwpm')
     def message(sid, data):
         print("sql ", data)
+        dbport.send(data)
 
     @sio.on('disconnect', namespace='/openwpm')
     def disconnect(sid):

@@ -69,6 +69,7 @@ class Browser:
         self.curr_visit_id = visit_id
 
     def launch_browser_manager(self):
+        print 1
         """
         sets up the BrowserManager and gets the process id, browser pid and, if applicable, screen pid
         loads associated user profile if necessary
@@ -76,6 +77,7 @@ class Browser:
         # if this is restarting from a crash, update the tar location
         # to be a tar of the crashed browser's history
         if self.current_profile_path is not None:
+            print 2
             # tar contents of crashed profile to a temp dir
             tempdir = tempfile.mkdtemp() + "/"
             profile_commands.dump_profile(self.current_profile_path,
@@ -88,6 +90,7 @@ class Browser:
             self.browser_params['random_attributes'] = False  # don't re-randomize attributes
             crash_recovery = True
         else:
+            print 3
             tempdir = None
             crash_recovery = False
         self.is_fresh = not crash_recovery
@@ -95,6 +98,7 @@ class Browser:
         # Try to spawn the browser within the timelimit
         unsuccessful_spawns = 0
         success = False
+        print 4
 
         def check_queue(launch_status):
             result = self.status_queue.get(True, self._SPAWN_TIMEOUT)
@@ -105,6 +109,8 @@ class Browser:
                 reraise(*cPickle.loads(result[1]))
             elif result[0] == 'FAILED':
                 raise BrowserCrashError('Browser spawn returned failure status')
+
+        print 5
 
         while not success and unsuccessful_spawns < self._UNSUCCESSFUL_SPAWN_LIMIT:
             self.logger.debug("BROWSER %i: Spawn attempt %i " % (self.crawl_id, unsuccessful_spawns))

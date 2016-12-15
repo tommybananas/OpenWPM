@@ -117,9 +117,9 @@ class TaskManager:
         # open client socket
         self.sock = clientsocket(serialization='dill')
         self.sock.connect(*self.manager_params['aggregator_address'])
-
+        print 1
         self._save_configuration(browser_params)
-
+        print 2
         # read the last used site visit id
         cur = self.db.cursor()
         cur.execute("SELECT MAX(visit_id) from site_visits")
@@ -127,11 +127,12 @@ class TaskManager:
         if last_visit_id is None:
             last_visit_id = 0
         self.next_visit_id = last_visit_id + 1
-
+        print 3
         # sets up the BrowserManager(s) + associated queues
         self.browsers = self._initialize_browsers(browser_params)  # List of the Browser(s)
+        print 5
         self._launch_browsers()
-
+        print 4
         # start the manager watchdog
         thread = threading.Thread(target=self._manager_watchdog, args=())
         thread.daemon = True
@@ -173,11 +174,16 @@ class TaskManager:
         return browsers
 
     def _launch_browsers(self):
+        print 8
+        print self.browsers
         """ launch each browser manager process / browser """
         for browser in self.browsers:
             try:
+                print 9
                 success = browser.launch_browser_manager()
+                print 6
             except:
+                print 7
                 self._cleanup_before_fail(during_init=True)
                 raise
 
